@@ -19,7 +19,7 @@ const (
 	RuleConfigMatch         RuleConfig = "MATCH"
 )
 
-// Rule Config Type String represents a rule type in configuration files.
+// RuleConfig Rule Config Type String represents a rule type in configuration files.
 type RuleConfig string
 
 // Rule Type

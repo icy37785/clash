@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Dreamacro/clash/common/pool"
-	"github.com/Dreamacro/clash/transport/ssr/tools"
+	"github.com/icy37785/clash/common/pool"
+	"github.com/icy37785/clash/transport/ssr/tools"
 )
 
 func init() {
@@ -49,7 +49,9 @@ func (c *tls12TicketConn) Read(b []byte) (int, error) {
 	}
 
 	buf := pool.Get(pool.RelayBufferSize)
-	defer pool.Put(buf)
+	defer func(buf []byte) {
+		_ = pool.Put(buf)
+	}(buf)
 	n, err := c.Conn.Read(buf)
 	if err != nil {
 		return 0, err
@@ -140,16 +142,16 @@ func (c *tls12TicketConn) Write(b []byte) (int, error) {
 		ext.Write([]byte{0x00, 0x0b, 0x00, 0x02, 0x01, 0x00})
 		ext.Write([]byte{0x00, 0x0a, 0x00, 0x06, 0x00, 0x04, 0x00, 0x17, 0x00, 0x18})
 
-		binary.Write(data, binary.BigEndian, uint16(ext.Len()))
+		_ = binary.Write(data, binary.BigEndian, uint16(ext.Len()))
 		data.ReadFrom(ext)
 
 		ret := pool.GetBuffer()
 		defer pool.PutBuffer(ret)
 
 		ret.Write([]byte{0x16, 3, 1})
-		binary.Write(ret, binary.BigEndian, uint16(data.Len()+4))
+		_ = binary.Write(ret, binary.BigEndian, uint16(data.Len()+4))
 		ret.Write([]byte{1, 0})
-		binary.Write(ret, binary.BigEndian, uint16(data.Len()))
+		_ = binary.Write(ret, binary.BigEndian, uint16(data.Len()))
 		ret.ReadFrom(data)
 
 		_, err := c.Conn.Write(ret.Bytes())
@@ -176,36 +178,38 @@ func (c *tls12TicketConn) Write(b []byte) (int, error) {
 
 func packData(buf *bytes.Buffer, data []byte) {
 	buf.Write([]byte{0x17, 3, 3})
-	binary.Write(buf, binary.BigEndian, uint16(len(data)))
+	_ = binary.Write(buf, binary.BigEndian, uint16(len(data)))
 	buf.Write(data)
 }
 
 func (t *tls12Ticket) packAuthData(buf *bytes.Buffer) {
-	binary.Write(buf, binary.BigEndian, uint32(time.Now().Unix()))
+	_ = binary.Write(buf, binary.BigEndian, uint32(time.Now().Unix()))
 	tools.AppendRandBytes(buf, 18)
 	buf.Write(t.hmacSHA1(buf.Bytes()[buf.Len()-22:])[:10])
 }
 
 func packSNIData(buf *bytes.Buffer, u string) {
-	len := uint16(len(u))
+	_len := uint16(len(u))
 	buf.Write([]byte{0, 0})
-	binary.Write(buf, binary.BigEndian, len+5)
-	binary.Write(buf, binary.BigEndian, len+3)
+	_ = binary.Write(buf, binary.BigEndian, _len+5)
+	_ = binary.Write(buf, binary.BigEndian, _len+3)
 	buf.WriteByte(0)
-	binary.Write(buf, binary.BigEndian, len)
+	_ = binary.Write(buf, binary.BigEndian, _len)
 	buf.WriteString(u)
 }
 
 func (c *tls12TicketConn) packTicketBuf(buf *bytes.Buffer, u string) {
 	length := 16 * (mathRand.Intn(17) + 8)
 	buf.Write([]byte{0, 0x23})
-	binary.Write(buf, binary.BigEndian, uint16(length))
+	_ = binary.Write(buf, binary.BigEndian, uint16(length))
 	tools.AppendRandBytes(buf, length)
 }
 
 func (t *tls12Ticket) hmacSHA1(data []byte) []byte {
 	key := pool.Get(len(t.Key) + 32)
-	defer pool.Put(key)
+	defer func(buf []byte) {
+		_ = pool.Put(buf)
+	}(key)
 	copy(key, t.Key)
 	copy(key[len(t.Key):], t.clientID[:])
 

@@ -4,15 +4,15 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           check-latest: true
-          go-version: '1.21'
+          go-version: '1.23.4'
 
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+      - name: golangci-lint Check
+        uses: golangci/golangci-lint-action@v6
         with:
           version: latest

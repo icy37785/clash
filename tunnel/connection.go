@@ -6,9 +6,9 @@ import (
 	"net/netip"
 	"time"
 
-	N "github.com/Dreamacro/clash/common/net"
-	"github.com/Dreamacro/clash/common/pool"
-	C "github.com/Dreamacro/clash/constant"
+	N "github.com/icy37785/clash/common/net"
+	"github.com/icy37785/clash/common/pool"
+	C "github.com/icy37785/clash/constant"
 )
 
 func handleUDPToRemote(packet C.UDPPacket, pc C.PacketConn, metadata *C.Metadata) error {
@@ -21,7 +21,7 @@ func handleUDPToRemote(packet C.UDPPacket, pc C.PacketConn, metadata *C.Metadata
 		return err
 	}
 	// reset timeout
-	pc.SetReadDeadline(time.Now().Add(udpTimeout))
+	_ = pc.SetReadDeadline(time.Now().Add(udpTimeout))
 
 	return nil
 }
@@ -33,7 +33,7 @@ func handleUDPToLocal(packet C.UDPPacket, pc net.PacketConn, key string, oAddr, 
 	defer pc.Close()
 
 	for {
-		pc.SetReadDeadline(time.Now().Add(udpTimeout))
+		_ = pc.SetReadDeadline(time.Now().Add(udpTimeout))
 		n, from, err := pc.ReadFrom(buf)
 		if err != nil {
 			return

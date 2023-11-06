@@ -85,7 +85,7 @@ func (vc *Conn) sendRequest() error {
 
 	if !vc.isAead {
 		h := hmac.New(md5.New, vc.id.UUID.Bytes())
-		binary.Write(h, binary.BigEndian, uint64(timestamp.Unix()))
+		_ = binary.Write(h, binary.BigEndian, uint64(timestamp.Unix()))
 		mbuf.PutSlice(h.Sum(nil))
 	}
 
@@ -115,7 +115,7 @@ func (vc *Conn) sendRequest() error {
 
 	// padding
 	if p > 0 {
-		buf.ReadFull(rand.Reader, p)
+		_ = buf.ReadFull(rand.Reader, p)
 	}
 
 	fnv1a := fnv.New32a()

@@ -9,11 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Dreamacro/clash/common/cache"
-	"github.com/Dreamacro/clash/component/fakeip"
-	"github.com/Dreamacro/clash/component/resolver"
-	"github.com/Dreamacro/clash/component/trie"
-	C "github.com/Dreamacro/clash/constant"
+	"github.com/icy37785/clash/common/cache"
+	"github.com/icy37785/clash/component/fakeip"
+	"github.com/icy37785/clash/component/resolver"
+	"github.com/icy37785/clash/component/trie"
+	C "github.com/icy37785/clash/constant"
 
 	D "github.com/miekg/dns"
 	"github.com/samber/lo"
@@ -136,10 +136,10 @@ func (r *Resolver) ExchangeContext(ctx context.Context, m *D.Msg) (msg *D.Msg, e
 	}
 
 	q := m.Question[0]
-	cache, expireTime, hit := r.lruCache.GetWithExpire(q.String())
+	_cache, expireTime, hit := r.lruCache.GetWithExpire(q.String())
 	if hit {
 		now := time.Now()
-		msg = cache.(*D.Msg).Copy()
+		msg = _cache.(*D.Msg).Copy()
 		if expireTime.Before(now) {
 			setMsgTTL(msg, uint32(1)) // Continue fetch
 			go func() {
@@ -390,11 +390,11 @@ func NewResolver(config Config) *Resolver {
 	if len(config.Policy) != 0 {
 		r.policy = trie.New()
 		for domain, nameserver := range config.Policy {
-			r.policy.Insert(domain, transform([]NameServer{nameserver}, defaultResolver))
+			_ = r.policy.Insert(domain, transform([]NameServer{nameserver}, defaultResolver))
 		}
 	}
 
-	fallbackIPFilters := []fallbackIPFilter{}
+	var fallbackIPFilters []fallbackIPFilter
 	if config.FallbackFilter.GeoIP {
 		fallbackIPFilters = append(fallbackIPFilters, &geoipFilter{
 			code: config.FallbackFilter.GeoIPCode,

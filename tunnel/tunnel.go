@@ -9,15 +9,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Dreamacro/clash/adapter/inbound"
-	"github.com/Dreamacro/clash/component/nat"
-	P "github.com/Dreamacro/clash/component/process"
-	"github.com/Dreamacro/clash/component/resolver"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/constant/provider"
-	icontext "github.com/Dreamacro/clash/context"
-	"github.com/Dreamacro/clash/log"
-	"github.com/Dreamacro/clash/tunnel/statistic"
+	"github.com/icy37785/clash/adapter/inbound"
+	"github.com/icy37785/clash/component/nat"
+	P "github.com/icy37785/clash/component/process"
+	"github.com/icy37785/clash/component/resolver"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/constant/provider"
+	icontext "github.com/icy37785/clash/context"
+	"github.com/icy37785/clash/log"
+	"github.com/icy37785/clash/tunnel/statistic"
 
 	"go.uber.org/atomic"
 )
@@ -37,7 +37,7 @@ var (
 	// default timeout for UDP session
 	udpTimeout = 60 * time.Second
 
-	// experimental feature
+	// UDPFallbackMatch experimental feature
 	UDPFallbackMatch = atomic.NewBool(false)
 )
 
@@ -213,7 +213,7 @@ func handleUDPConn(packet *inbound.PacketAdapter) {
 	handle := func() bool {
 		pc := natTable.Get(key)
 		if pc != nil {
-			handleUDPToRemote(packet, pc, metadata)
+			_ = handleUDPToRemote(packet, pc, metadata)
 			return true
 		}
 		return false

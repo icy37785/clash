@@ -6,7 +6,7 @@ import (
 	"io"
 	"net"
 
-	"github.com/Dreamacro/clash/common/pool"
+	"github.com/icy37785/clash/common/pool"
 )
 
 // ErrShortPacket means the packet is too short to be a valid encrypted packet.
@@ -56,7 +56,9 @@ const maxPacketSize = 64 * 1024
 
 func (c *PacketConn) WriteTo(b []byte, addr net.Addr) (int, error) {
 	buf := pool.Get(maxPacketSize)
-	defer pool.Put(buf)
+	defer func(buf []byte) {
+		_ = pool.Put(buf)
+	}(buf)
 	buf, err := Pack(buf, b, c.Cipher)
 	if err != nil {
 		return 0, err

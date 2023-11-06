@@ -6,7 +6,7 @@ import (
 	"net/netip"
 	"strconv"
 
-	"github.com/Dreamacro/clash/transport/socks5"
+	"github.com/icy37785/clash/transport/socks5"
 )
 
 // Socks addr type
@@ -106,9 +106,9 @@ func (m *Metadata) Resolved() bool {
 // when dialing proxy connection in DNSMapping mode.
 func (m *Metadata) Pure() *Metadata {
 	if m.DNSMode == DNSMapping && m.DstIP != nil {
-		copy := *m
-		copy.Host = ""
-		return &copy
+		_copy := *m
+		_copy.Host = ""
+		return &_copy
 	}
 
 	return m

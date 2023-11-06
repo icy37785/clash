@@ -7,7 +7,7 @@ import (
 	mathRand "math/rand"
 	"net"
 
-	"github.com/Dreamacro/clash/common/pool"
+	"github.com/icy37785/clash/common/pool"
 )
 
 func init() {
@@ -40,7 +40,9 @@ func (c *randomHeadConn) Read(b []byte) (int, error) {
 		return c.Conn.Read(b)
 	}
 	buf := pool.Get(pool.RelayBufferSize)
-	defer pool.Put(buf)
+	defer func(buf []byte) {
+		_ = pool.Put(buf)
+	}(buf)
 	c.Conn.Read(buf)
 	c.rawTransRecv = true
 	c.Write(nil)
@@ -56,7 +58,9 @@ func (c *randomHeadConn) Write(b []byte) (int, error) {
 		c.hasSentHeader = true
 		dataLength := mathRand.Intn(96) + 4
 		buf := pool.Get(dataLength + 4)
-		defer pool.Put(buf)
+		defer func(buf []byte) {
+			_ = pool.Put(buf)
+		}(buf)
 		rand.Read(buf[:dataLength])
 		binary.LittleEndian.PutUint32(buf[dataLength:], 0xffffffff-crc32.ChecksumIEEE(buf[:dataLength]))
 		_, err := c.Conn.Write(buf)

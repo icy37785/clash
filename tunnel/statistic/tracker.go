@@ -4,7 +4,7 @@ import (
 	"net"
 	"time"
 
-	C "github.com/Dreamacro/clash/constant"
+	C "github.com/icy37785/clash/constant"
 
 	"github.com/gofrs/uuid/v5"
 	"go.uber.org/atomic"
@@ -26,17 +26,17 @@ type trackerInfo struct {
 	RulePayload   string        `json:"rulePayload"`
 }
 
-type tcpTracker struct {
+type TcpTracker struct {
 	C.Conn `json:"-"`
 	*trackerInfo
 	manager *Manager
 }
 
-func (tt *tcpTracker) ID() string {
+func (tt *TcpTracker) ID() string {
 	return tt.UUID.String()
 }
 
-func (tt *tcpTracker) Read(b []byte) (int, error) {
+func (tt *TcpTracker) Read(b []byte) (int, error) {
 	n, err := tt.Conn.Read(b)
 	download := int64(n)
 	tt.manager.PushDownloaded(download)
@@ -44,7 +44,7 @@ func (tt *tcpTracker) Read(b []byte) (int, error) {
 	return n, err
 }
 
-func (tt *tcpTracker) Write(b []byte) (int, error) {
+func (tt *TcpTracker) Write(b []byte) (int, error) {
 	n, err := tt.Conn.Write(b)
 	upload := int64(n)
 	tt.manager.PushUploaded(upload)
@@ -52,19 +52,19 @@ func (tt *tcpTracker) Write(b []byte) (int, error) {
 	return n, err
 }
 
-func (tt *tcpTracker) Close() error {
+func (tt *TcpTracker) Close() error {
 	tt.manager.Leave(tt)
 	return tt.Conn.Close()
 }
 
-func NewTCPTracker(conn C.Conn, manager *Manager, metadata *C.Metadata, rule C.Rule) *tcpTracker {
-	uuid, _ := uuid.NewV4()
+func NewTCPTracker(conn C.Conn, manager *Manager, metadata *C.Metadata, rule C.Rule) *TcpTracker {
+	_uuid, _ := uuid.NewV4()
 
-	t := &tcpTracker{
+	t := &TcpTracker{
 		Conn:    conn,
 		manager: manager,
 		trackerInfo: &trackerInfo{
-			UUID:          uuid,
+			UUID:          _uuid,
 			Start:         time.Now(),
 			Metadata:      metadata,
 			Chain:         conn.Chains(),
@@ -83,17 +83,17 @@ func NewTCPTracker(conn C.Conn, manager *Manager, metadata *C.Metadata, rule C.R
 	return t
 }
 
-type udpTracker struct {
+type UdpTracker struct {
 	C.PacketConn `json:"-"`
 	*trackerInfo
 	manager *Manager
 }
 
-func (ut *udpTracker) ID() string {
+func (ut *UdpTracker) ID() string {
 	return ut.UUID.String()
 }
 
-func (ut *udpTracker) ReadFrom(b []byte) (int, net.Addr, error) {
+func (ut *UdpTracker) ReadFrom(b []byte) (int, net.Addr, error) {
 	n, addr, err := ut.PacketConn.ReadFrom(b)
 	download := int64(n)
 	ut.manager.PushDownloaded(download)
@@ -101,7 +101,7 @@ func (ut *udpTracker) ReadFrom(b []byte) (int, net.Addr, error) {
 	return n, addr, err
 }
 
-func (ut *udpTracker) WriteTo(b []byte, addr net.Addr) (int, error) {
+func (ut *UdpTracker) WriteTo(b []byte, addr net.Addr) (int, error) {
 	n, err := ut.PacketConn.WriteTo(b, addr)
 	upload := int64(n)
 	ut.manager.PushUploaded(upload)
@@ -109,19 +109,19 @@ func (ut *udpTracker) WriteTo(b []byte, addr net.Addr) (int, error) {
 	return n, err
 }
 
-func (ut *udpTracker) Close() error {
+func (ut *UdpTracker) Close() error {
 	ut.manager.Leave(ut)
 	return ut.PacketConn.Close()
 }
 
-func NewUDPTracker(conn C.PacketConn, manager *Manager, metadata *C.Metadata, rule C.Rule) *udpTracker {
-	uuid, _ := uuid.NewV4()
+func NewUDPTracker(conn C.PacketConn, manager *Manager, metadata *C.Metadata, rule C.Rule) *UdpTracker {
+	_uuid, _ := uuid.NewV4()
 
-	ut := &udpTracker{
+	ut := &UdpTracker{
 		PacketConn: conn,
 		manager:    manager,
 		trackerInfo: &trackerInfo{
-			UUID:          uuid,
+			UUID:          _uuid,
 			Start:         time.Now(),
 			Metadata:      metadata,
 			Chain:         conn.Chains(),

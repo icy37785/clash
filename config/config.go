@@ -8,19 +8,19 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Dreamacro/clash/adapter"
-	"github.com/Dreamacro/clash/adapter/outbound"
-	"github.com/Dreamacro/clash/adapter/outboundgroup"
-	"github.com/Dreamacro/clash/adapter/provider"
-	"github.com/Dreamacro/clash/component/auth"
-	"github.com/Dreamacro/clash/component/fakeip"
-	"github.com/Dreamacro/clash/component/trie"
-	C "github.com/Dreamacro/clash/constant"
-	providerTypes "github.com/Dreamacro/clash/constant/provider"
-	"github.com/Dreamacro/clash/dns"
-	"github.com/Dreamacro/clash/log"
-	R "github.com/Dreamacro/clash/rule"
-	T "github.com/Dreamacro/clash/tunnel"
+	"github.com/icy37785/clash/adapter"
+	"github.com/icy37785/clash/adapter/outbound"
+	"github.com/icy37785/clash/adapter/outboundgroup"
+	"github.com/icy37785/clash/adapter/provider"
+	"github.com/icy37785/clash/component/auth"
+	"github.com/icy37785/clash/component/fakeip"
+	"github.com/icy37785/clash/component/trie"
+	C "github.com/icy37785/clash/constant"
+	providerTypes "github.com/icy37785/clash/constant/provider"
+	"github.com/icy37785/clash/dns"
+	"github.com/icy37785/clash/log"
+	R "github.com/icy37785/clash/rule"
+	T "github.com/icy37785/clash/tunnel"
 
 	"github.com/samber/lo"
 	"gopkg.in/yaml.v3"
@@ -38,7 +38,6 @@ type General struct {
 	RoutingMark    int          `json:"-"`
 }
 
-// Controller
 type Controller struct {
 	ExternalController string `json:"-"`
 	ExternalUI         string `json:"-"`
@@ -354,7 +353,7 @@ func parseGeneral(cfg *RawConfig) (*General, error) {
 func parseProxies(cfg *RawConfig) (proxies map[string]C.Proxy, providersMap map[string]providerTypes.ProxyProvider, err error) {
 	proxies = make(map[string]C.Proxy)
 	providersMap = make(map[string]providerTypes.ProxyProvider)
-	proxyList := []string{}
+	var proxyList []string
 	proxiesConfig := cfg.Proxy
 	groupsConfig := cfg.ProxyGroup
 	providersConfig := cfg.ProxyProvider
@@ -405,10 +404,10 @@ func parseProxies(cfg *RawConfig) (proxies map[string]C.Proxy, providersMap map[
 		providersMap[name] = pd
 	}
 
-	for _, provider := range providersMap {
-		log.Infoln("Start initial provider %s", provider.Name())
-		if err := provider.Initial(); err != nil {
-			return nil, nil, fmt.Errorf("initial proxy provider %s error: %w", provider.Name(), err)
+	for _, _provider := range providersMap {
+		log.Infoln("Start initial provider %s", _provider.Name())
+		if err := _provider.Initial(); err != nil {
+			return nil, nil, fmt.Errorf("initial proxy provider %s error: %w", _provider.Name(), err)
 		}
 	}
 
@@ -439,7 +438,7 @@ func parseProxies(cfg *RawConfig) (proxies map[string]C.Proxy, providersMap map[
 		}
 	}
 
-	ps := []C.Proxy{}
+	var ps []C.Proxy
 	for _, v := range proxyList {
 		ps = append(ps, proxies[v])
 	}
@@ -458,7 +457,7 @@ func parseProxies(cfg *RawConfig) (proxies map[string]C.Proxy, providersMap map[
 }
 
 func parseRules(cfg *RawConfig, proxies map[string]C.Proxy) ([]C.Rule, error) {
-	rules := []C.Rule{}
+	var rules []C.Rule
 	rulesConfig := cfg.Rule
 
 	// parse rules
@@ -467,7 +466,7 @@ func parseRules(cfg *RawConfig, proxies map[string]C.Proxy) ([]C.Rule, error) {
 		var (
 			payload string
 			target  string
-			params  = []string{}
+			params  []string
 		)
 
 		switch l := len(rule); {
@@ -516,7 +515,7 @@ func parseHosts(cfg *RawConfig) (*trie.DomainTrie, error) {
 			if ip == nil {
 				return nil, fmt.Errorf("%s is not a valid IP", ipStr)
 			}
-			tree.Insert(domain, ip)
+			_ = tree.Insert(domain, ip)
 		}
 	}
 
@@ -541,7 +540,7 @@ func hostWithDefaultPort(host string, defPort string) (string, error) {
 }
 
 func parseNameServer(servers []string) ([]dns.NameServer, error) {
-	nameservers := []dns.NameServer{}
+	var nameservers []dns.NameServer
 
 	for idx, server := range servers {
 		// parse without scheme .e.g 8.8.8.8:53
@@ -613,7 +612,7 @@ func parseNameServerPolicy(nsPolicy map[string]string) (map[string]dns.NameServe
 }
 
 func parseFallbackIPCIDR(ips []string) ([]*net.IPNet, error) {
-	ipNets := []*net.IPNet{}
+	var ipNets []*net.IPNet
 
 	for idx, ip := range ips {
 		_, ipnet, err := net.ParseCIDR(ip)
@@ -679,7 +678,7 @@ func parseDNS(rawCfg *RawConfig, hosts *trie.DomainTrie) (*DNS, error) {
 		if len(cfg.FakeIPFilter) != 0 {
 			host = trie.New()
 			for _, domain := range cfg.FakeIPFilter {
-				host.Insert(domain, true)
+				_ = host.Insert(domain, true)
 			}
 		}
 
@@ -723,7 +722,7 @@ func parseDNS(rawCfg *RawConfig, hosts *trie.DomainTrie) (*DNS, error) {
 }
 
 func parseAuthentication(rawRecords []string) []auth.AuthUser {
-	users := []auth.AuthUser{}
+	var users []auth.AuthUser
 	for _, line := range rawRecords {
 		if user, pass, found := strings.Cut(line, ":"); found {
 			users = append(users, auth.AuthUser{User: user, Pass: pass})

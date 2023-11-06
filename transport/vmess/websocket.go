@@ -80,15 +80,15 @@ func (wsc *websocketConn) Write(b []byte) (int, error) {
 }
 
 func (wsc *websocketConn) Close() error {
-	var errors []string
+	var _errors []string
 	if err := wsc.conn.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""), time.Now().Add(time.Second*5)); err != nil {
-		errors = append(errors, err.Error())
+		_errors = append(_errors, err.Error())
 	}
 	if err := wsc.conn.Close(); err != nil {
-		errors = append(errors, err.Error())
+		_errors = append(_errors, err.Error())
 	}
-	if len(errors) > 0 {
-		return fmt.Errorf("failed to close connection: %s", strings.Join(errors, ","))
+	if len(_errors) > 0 {
+		return fmt.Errorf("failed to close connection: %s", strings.Join(_errors, ","))
 	}
 	return nil
 }
@@ -144,7 +144,7 @@ func (wsedc *websocketWithEarlyDataConn) Dial(earlyData []byte) error {
 
 	var err error
 	if wsedc.Conn, err = streamWebsocketConn(wsedc.underlay, wsedc.config, base64DataBuf); err != nil {
-		wsedc.Close()
+		_ = wsedc.Close()
 		return errors.New("failed to dial WebSocket: " + err.Error())
 	}
 

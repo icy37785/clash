@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/Dreamacro/clash/adapter/inbound"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/transport/socks5"
+	"github.com/icy37785/clash/adapter/inbound"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/transport/socks5"
 )
 
 type Listener struct {
@@ -34,7 +34,7 @@ func (l *Listener) Close() error {
 }
 
 func (l *Listener) handleTCP(conn net.Conn, in chan<- C.ConnContext) {
-	conn.(*net.TCPConn).SetKeepAlive(true)
+	_ = conn.(*net.TCPConn).SetKeepAlive(true)
 	ctx := inbound.NewSocket(l.target, conn, C.TUNNEL)
 	ctx.Metadata().SpecialProxy = l.proxy
 	in <- ctx

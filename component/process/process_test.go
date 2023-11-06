@@ -14,19 +14,25 @@ func testConn(t *testing.T, network, address string) {
 	if err != nil {
 		assert.FailNow(t, "Listen failed", err)
 	}
-	defer l.Close()
+	defer func(l net.Listener) {
+		_ = l.Close()
+	}(l)
 
 	conn, err := net.Dial("tcp", l.Addr().String())
 	if err != nil {
 		assert.FailNow(t, "Dial failed", err)
 	}
-	defer conn.Close()
+	defer func(conn net.Conn) {
+		_ = conn.Close()
+	}(conn)
 
 	rConn, err := l.Accept()
 	if err != nil {
 		assert.FailNow(t, "Accept conn failed", err)
 	}
-	defer rConn.Close()
+	defer func(rConn net.Conn) {
+		_ = rConn.Close()
+	}(rConn)
 
 	path, err := FindProcessPath(TCP, conn.LocalAddr().(*net.TCPAddr).AddrPort(), conn.RemoteAddr().(*net.TCPAddr).AddrPort())
 	if err != nil {
@@ -55,13 +61,17 @@ func testPacketConn(t *testing.T, network, lAddress, rAddress string) {
 	if err != nil {
 		assert.FailNow(t, "ListenPacket failed", err)
 	}
-	defer lConn.Close()
+	defer func(lConn net.PacketConn) {
+		_ = lConn.Close()
+	}(lConn)
 
 	rConn, err := net.ListenPacket(network, rAddress)
 	if err != nil {
 		assert.FailNow(t, "ListenPacket failed", err)
 	}
-	defer rConn.Close()
+	defer func(rConn net.PacketConn) {
+		_ = rConn.Close()
+	}(rConn)
 
 	_, err = lConn.WriteTo([]byte{0}, rConn.LocalAddr())
 	if err != nil {

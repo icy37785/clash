@@ -48,7 +48,7 @@ func (q *Queue) Last() any {
 
 // Copy get the copy of queue.
 func (q *Queue) Copy() []any {
-	items := []any{}
+	var items []any
 	q.lock.RLock()
 	items = append(items, q.items...)
 	q.lock.RUnlock()

@@ -5,23 +5,23 @@ import (
 	"os"
 	"sync"
 
-	"github.com/Dreamacro/clash/adapter"
-	"github.com/Dreamacro/clash/adapter/outboundgroup"
-	"github.com/Dreamacro/clash/component/auth"
-	"github.com/Dreamacro/clash/component/dialer"
-	"github.com/Dreamacro/clash/component/iface"
-	"github.com/Dreamacro/clash/component/profile"
-	"github.com/Dreamacro/clash/component/profile/cachefile"
-	"github.com/Dreamacro/clash/component/resolver"
-	"github.com/Dreamacro/clash/component/trie"
-	"github.com/Dreamacro/clash/config"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/constant/provider"
-	"github.com/Dreamacro/clash/dns"
-	"github.com/Dreamacro/clash/listener"
-	authStore "github.com/Dreamacro/clash/listener/auth"
-	"github.com/Dreamacro/clash/log"
-	"github.com/Dreamacro/clash/tunnel"
+	"github.com/icy37785/clash/adapter"
+	"github.com/icy37785/clash/adapter/outboundgroup"
+	"github.com/icy37785/clash/component/auth"
+	"github.com/icy37785/clash/component/dialer"
+	"github.com/icy37785/clash/component/iface"
+	"github.com/icy37785/clash/component/profile"
+	"github.com/icy37785/clash/component/profile/cachefile"
+	"github.com/icy37785/clash/component/resolver"
+	"github.com/icy37785/clash/component/trie"
+	"github.com/icy37785/clash/config"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/constant/provider"
+	"github.com/icy37785/clash/dns"
+	"github.com/icy37785/clash/listener"
+	authStore "github.com/icy37785/clash/listener/auth"
+	"github.com/icy37785/clash/log"
+	"github.com/icy37785/clash/tunnel"
 )
 
 var mux sync.Mutex
@@ -81,9 +81,9 @@ func ApplyConfig(cfg *config.Config, force bool) {
 
 func GetGeneral() *config.General {
 	ports := listener.GetPorts()
-	authenticator := []string{}
-	if auth := authStore.Authenticator(); auth != nil {
-		authenticator = auth.Users()
+	var authenticator []string
+	if _auth := authStore.Authenticator(); _auth != nil {
+		authenticator = _auth.Users()
 	}
 
 	general := &config.General{
@@ -244,6 +244,6 @@ func patchSelectGroup(proxies map[string]C.Proxy) {
 			continue
 		}
 
-		selector.Set(selected)
+		_ = selector.Set(selected)
 	}
 }

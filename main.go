@@ -10,11 +10,11 @@ import (
 	"syscall"
 	_ "time/tzdata"
 
-	"github.com/Dreamacro/clash/config"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/hub"
-	"github.com/Dreamacro/clash/hub/executor"
-	"github.com/Dreamacro/clash/log"
+	"github.com/icy37785/clash/config"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/hub"
+	"github.com/icy37785/clash/hub/executor"
+	"github.com/icy37785/clash/log"
 
 	"go.uber.org/automaxprocs/maxprocs"
 )
@@ -41,7 +41,11 @@ func init() {
 }
 
 func main() {
-	maxprocs.Set(maxprocs.Logger(func(string, ...any) {}))
+	_, err := maxprocs.Set(maxprocs.Logger(func(string, ...any) {}))
+	if err != nil {
+		log.Errorln("%s", err.Error())
+	}
+
 	if version {
 		fmt.Printf("Clash %s %s %s with %s %s\n", C.Version, runtime.GOOS, runtime.GOARCH, runtime.Version(), C.BuildTime)
 		return
@@ -72,7 +76,7 @@ func main() {
 
 	if testConfig {
 		if _, err := executor.Parse(); err != nil {
-			log.Errorln(err.Error())
+			log.Errorln("%s", err.Error())
 			fmt.Printf("configuration file %s test failed\n", C.Path.Config())
 			os.Exit(1)
 		}

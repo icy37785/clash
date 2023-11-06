@@ -7,9 +7,9 @@ import (
 	"net"
 	"sync"
 
-	"github.com/Dreamacro/clash/common/pool"
-	"github.com/Dreamacro/clash/transport/shadowsocks/shadowaead"
-	"github.com/Dreamacro/clash/transport/socks5"
+	"github.com/icy37785/clash/common/pool"
+	"github.com/icy37785/clash/transport/shadowsocks/shadowaead"
+	"github.com/icy37785/clash/transport/socks5"
 )
 
 const (
@@ -36,7 +36,7 @@ const (
 	Version byte = 1
 )
 
-var endSignal = []byte{}
+var endSignal []byte
 
 type Snell struct {
 	net.Conn
@@ -200,7 +200,9 @@ func WritePacket(w io.Writer, socks5Addr, payload []byte) (int, error) {
 
 func ReadPacket(r io.Reader, payload []byte) (net.Addr, int, error) {
 	buf := pool.Get(pool.UDPBufferSize)
-	defer pool.Put(buf)
+	defer func(buf []byte) {
+		_ = pool.Put(buf)
+	}(buf)
 
 	n, err := r.Read(buf)
 	headLen := 1

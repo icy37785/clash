@@ -10,9 +10,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Dreamacro/clash/common/pool"
-	"github.com/Dreamacro/clash/log"
-	"github.com/Dreamacro/clash/transport/ssr/tools"
+	"github.com/icy37785/clash/common/pool"
+	"github.com/icy37785/clash/log"
+	"github.com/icy37785/clash/transport/ssr/tools"
 )
 
 type (
@@ -98,7 +98,9 @@ func (a *authAES128) Decode(dst, src *bytes.Buffer) error {
 	}
 	for src.Len() > 4 {
 		macKey := pool.Get(len(a.userKey) + 4)
-		defer pool.Put(macKey)
+		defer func(buf []byte) {
+			_ = pool.Put(buf)
+		}(macKey)
 		copy(macKey, a.userKey)
 		binary.LittleEndian.PutUint32(macKey[len(a.userKey):], a.recvID)
 		if !bytes.Equal(a.hmac(macKey, src.Bytes()[:2])[:2], src.Bytes()[2:4]) {
@@ -276,6 +278,6 @@ func (a *authAES128) packRandData(poolBuf *bytes.Buffer, size int) {
 		return
 	}
 	poolBuf.WriteByte(255)
-	binary.Write(poolBuf, binary.LittleEndian, uint16(size+3))
+	_ = binary.Write(poolBuf, binary.LittleEndian, uint16(size+3))
 	tools.AppendRandBytes(poolBuf, size)
 }

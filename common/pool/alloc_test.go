@@ -35,7 +35,7 @@ func TestAllocPut(t *testing.T) {
 func TestAllocPutThenGet(t *testing.T) {
 	alloc := NewAllocator()
 	data := alloc.Get(4)
-	alloc.Put(data)
+	_ = alloc.Put(data)
 	newData := alloc.Get(4)
 
 	assert.Equal(t, cap(data), cap(newData), "different cap while alloc.Get()")

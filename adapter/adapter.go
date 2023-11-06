@@ -10,9 +10,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Dreamacro/clash/common/queue"
-	"github.com/Dreamacro/clash/component/dialer"
-	C "github.com/Dreamacro/clash/constant"
+	"github.com/icy37785/clash/common/queue"
+	"github.com/icy37785/clash/component/dialer"
+	C "github.com/icy37785/clash/constant"
 
 	"go.uber.org/atomic"
 )
@@ -58,9 +58,9 @@ func (p *Proxy) ListenPacketContext(ctx context.Context, metadata *C.Metadata, o
 
 // DelayHistory implements C.Proxy
 func (p *Proxy) DelayHistory() []C.DelayHistory {
-	queue := p.history.Copy()
-	histories := []C.DelayHistory{}
-	for _, item := range queue {
+	queues := p.history.Copy()
+	var histories []C.DelayHistory
+	for _, item := range queues {
 		histories = append(histories, item.(C.DelayHistory))
 	}
 	return histories
@@ -69,18 +69,18 @@ func (p *Proxy) DelayHistory() []C.DelayHistory {
 // LastDelay return last history record. if proxy is not alive, return the max value of uint16.
 // implements C.Proxy
 func (p *Proxy) LastDelay() (delay uint16) {
-	var max uint16 = 0xffff
+	var _max uint16 = 0xffff
 	if !p.alive.Load() {
-		return max
+		return _max
 	}
 
 	last := p.history.Last()
 	if last == nil {
-		return max
+		return _max
 	}
 	history := last.(C.DelayHistory)
 	if history.Delay == 0 {
-		return max
+		return _max
 	}
 	return history.Delay
 }
@@ -93,7 +93,7 @@ func (p *Proxy) MarshalJSON() ([]byte, error) {
 	}
 
 	mapping := map[string]any{}
-	json.Unmarshal(inner, &mapping)
+	_ = json.Unmarshal(inner, &mapping)
 	mapping["history"] = p.DelayHistory()
 	mapping["alive"] = p.Alive()
 	mapping["name"] = p.Name()

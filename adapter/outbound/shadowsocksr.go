@@ -6,13 +6,13 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/Dreamacro/clash/component/dialer"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/transport/shadowsocks/core"
-	"github.com/Dreamacro/clash/transport/shadowsocks/shadowaead"
-	"github.com/Dreamacro/clash/transport/shadowsocks/shadowstream"
-	"github.com/Dreamacro/clash/transport/ssr/obfs"
-	"github.com/Dreamacro/clash/transport/ssr/protocol"
+	"github.com/icy37785/clash/component/dialer"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/transport/shadowsocks/core"
+	"github.com/icy37785/clash/transport/shadowsocks/shadowaead"
+	"github.com/icy37785/clash/transport/shadowsocks/shadowstream"
+	"github.com/icy37785/clash/transport/ssr/obfs"
+	"github.com/icy37785/clash/transport/ssr/protocol"
 )
 
 type ShadowSocksR struct {
@@ -94,7 +94,7 @@ func (ssr *ShadowSocksR) ListenPacketContext(ctx context.Context, metadata *C.Me
 
 func NewShadowSocksR(option ShadowSocksROption) (*ShadowSocksR, error) {
 	// SSR protocol compatibility
-	// https://github.com/Dreamacro/clash/pull/2056
+	// https://github.com/MysticalDevil/clash/pull/2056
 	if option.Cipher == "none" {
 		option.Cipher = "dummy"
 	}
@@ -123,7 +123,7 @@ func NewShadowSocksR(option ShadowSocksROption) (*ShadowSocksR, error) {
 		key = ciph.Key
 	}
 
-	obfs, obfsOverhead, err := obfs.PickObfs(option.Obfs, &obfs.Base{
+	_obfs, obfsOverhead, err := obfs.PickObfs(option.Obfs, &obfs.Base{
 		Host:   option.Server,
 		Port:   option.Port,
 		Key:    key,
@@ -134,7 +134,7 @@ func NewShadowSocksR(option ShadowSocksROption) (*ShadowSocksR, error) {
 		return nil, fmt.Errorf("ssr %s initialize obfs error: %w", addr, err)
 	}
 
-	protocol, err := protocol.PickProtocol(option.Protocol, &protocol.Base{
+	_protocol, err := protocol.PickProtocol(option.Protocol, &protocol.Base{
 		Key:      key,
 		Overhead: obfsOverhead,
 		Param:    option.ProtocolParam,
@@ -153,7 +153,7 @@ func NewShadowSocksR(option ShadowSocksROption) (*ShadowSocksR, error) {
 			rmark: option.RoutingMark,
 		},
 		cipher:   coreCiph,
-		obfs:     obfs,
-		protocol: protocol,
+		obfs:     _obfs,
+		protocol: _protocol,
 	}, nil
 }

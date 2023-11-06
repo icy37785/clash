@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/constant/provider"
-	"github.com/Dreamacro/clash/tunnel"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/constant/provider"
+	"github.com/icy37785/clash/tunnel"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -45,13 +45,13 @@ func getProviders(w http.ResponseWriter, r *http.Request) {
 }
 
 func getProvider(w http.ResponseWriter, r *http.Request) {
-	provider := r.Context().Value(CtxKeyProvider).(provider.ProxyProvider)
-	render.JSON(w, r, provider)
+	_provider := r.Context().Value(CtxKeyProvider).(provider.ProxyProvider)
+	render.JSON(w, r, _provider)
 }
 
 func updateProvider(w http.ResponseWriter, r *http.Request) {
-	provider := r.Context().Value(CtxKeyProvider).(provider.ProxyProvider)
-	if err := provider.Update(); err != nil {
+	_provider := r.Context().Value(CtxKeyProvider).(provider.ProxyProvider)
+	if err := _provider.Update(); err != nil {
 		render.Status(r, http.StatusServiceUnavailable)
 		render.JSON(w, r, newError(err.Error()))
 		return
@@ -60,8 +60,8 @@ func updateProvider(w http.ResponseWriter, r *http.Request) {
 }
 
 func healthCheckProvider(w http.ResponseWriter, r *http.Request) {
-	provider := r.Context().Value(CtxKeyProvider).(provider.ProxyProvider)
-	provider.HealthCheck()
+	_provider := r.Context().Value(CtxKeyProvider).(provider.ProxyProvider)
+	_provider.HealthCheck()
 	render.NoContent(w, r)
 }
 
@@ -77,14 +77,14 @@ func findProviderByName(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		name := r.Context().Value(CtxKeyProviderName).(string)
 		providers := tunnel.Providers()
-		provider, exist := providers[name]
+		_provider, exist := providers[name]
 		if !exist {
 			render.Status(r, http.StatusNotFound)
 			render.JSON(w, r, ErrNotFound)
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), CtxKeyProvider, provider)
+		ctx := context.WithValue(r.Context(), CtxKeyProvider, _provider)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

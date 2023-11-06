@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Dreamacro/clash/common/pool"
+	"github.com/icy37785/clash/common/pool"
 )
 
 func init() {
@@ -53,7 +53,9 @@ func (c *httpConn) Read(b []byte) (int, error) {
 	}
 
 	buf := pool.Get(pool.RelayBufferSize)
-	defer pool.Put(buf)
+	defer func(buf []byte) {
+		_ = pool.Put(buf)
+	}(buf)
 	n, err := c.Conn.Read(buf)
 	if err != nil {
 		return 0, err

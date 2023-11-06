@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Dreamacro/clash/common/cache"
-	"github.com/Dreamacro/clash/common/picker"
-	"github.com/Dreamacro/clash/log"
+	"github.com/icy37785/clash/common/cache"
+	"github.com/icy37785/clash/common/picker"
+	"github.com/icy37785/clash/log"
 
 	D "github.com/miekg/dns"
 	"github.com/samber/lo"
@@ -85,7 +85,7 @@ func isIPRequest(q D.Question) bool {
 }
 
 func transform(servers []NameServer, resolver *Resolver) []dnsClient {
-	ret := []dnsClient{}
+	var ret []dnsClient
 	for _, s := range servers {
 		switch s.Net {
 		case "https":
@@ -127,7 +127,7 @@ func handleMsgWithEmptyAnswer(r *D.Msg) *D.Msg {
 }
 
 func msgToIP(msg *D.Msg) []net.IP {
-	ips := []net.IP{}
+	var ips []net.IP
 
 	for _, answer := range msg.Answer {
 		switch ans := answer.(type) {

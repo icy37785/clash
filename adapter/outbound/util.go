@@ -4,17 +4,17 @@ import (
 	"net"
 	"time"
 
-	"github.com/Dreamacro/clash/component/resolver"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/transport/socks5"
+	"github.com/icy37785/clash/component/resolver"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/transport/socks5"
 
 	"github.com/Dreamacro/protobytes"
 )
 
 func tcpKeepAlive(c net.Conn) {
 	if tcp, ok := c.(*net.TCPConn); ok {
-		tcp.SetKeepAlive(true)
-		tcp.SetKeepAlivePeriod(30 * time.Second)
+		_ = tcp.SetKeepAlive(true)
+		_ = tcp.SetKeepAlivePeriod(30 * time.Second)
 	}
 }
 

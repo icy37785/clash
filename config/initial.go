@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Dreamacro/clash/component/mmdb"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/log"
+	"github.com/icy37785/clash/component/mmdb"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/log"
 )
 
 func downloadMMDB(path string) (err error) {
@@ -16,13 +16,17 @@ func downloadMMDB(path string) (err error) {
 	if err != nil {
 		return
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
 
 	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0o644)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		_ = f.Close()
+	}(f)
 	_, err = io.Copy(f, resp.Body)
 
 	return err
@@ -67,7 +71,7 @@ func Init(dir string) error {
 			return fmt.Errorf("can't create file %s: %s", C.Path.Config(), err.Error())
 		}
 		f.Write([]byte(`mixed-port: 7890`))
-		f.Close()
+		_ = f.Close()
 	}
 
 	// initial mmdb

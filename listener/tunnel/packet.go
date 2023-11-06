@@ -3,7 +3,7 @@ package tunnel
 import (
 	"net"
 
-	"github.com/Dreamacro/clash/common/pool"
+	"github.com/icy37785/clash/common/pool"
 )
 
 type packet struct {
@@ -27,5 +27,5 @@ func (c *packet) LocalAddr() net.Addr {
 }
 
 func (c *packet) Drop() {
-	pool.Put(c.payload)
+	_ = pool.Put(c.payload)
 }

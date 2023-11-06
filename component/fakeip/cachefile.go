@@ -3,7 +3,7 @@ package fakeip
 import (
 	"net"
 
-	"github.com/Dreamacro/clash/component/profile/cachefile"
+	"github.com/icy37785/clash/component/profile/cachefile"
 )
 
 type cachefileStore struct {
@@ -16,12 +16,12 @@ func (c *cachefileStore) GetByHost(host string) (net.IP, bool) {
 	if elm == nil {
 		return nil, false
 	}
-	return net.IP(elm), true
+	return elm, true
 }
 
 // PutByHost implements store.PutByHost
 func (c *cachefileStore) PutByHost(host string, ip net.IP) {
-	c.cache.PutFakeip([]byte(host), ip)
+	_ = c.cache.PutFakeip([]byte(host), ip)
 }
 
 // GetByIP implements store.GetByIP
@@ -35,13 +35,13 @@ func (c *cachefileStore) GetByIP(ip net.IP) (string, bool) {
 
 // PutByIP implements store.PutByIP
 func (c *cachefileStore) PutByIP(ip net.IP, host string) {
-	c.cache.PutFakeip(ip.To4(), []byte(host))
+	_ = c.cache.PutFakeip(ip.To4(), []byte(host))
 }
 
 // DelByIP implements store.DelByIP
 func (c *cachefileStore) DelByIP(ip net.IP) {
 	ip = ip.To4()
-	c.cache.DelFakeipPair(ip, c.cache.GetFakeip(ip.To4()))
+	_ = c.cache.DelFakeipPair(ip, c.cache.GetFakeip(ip.To4()))
 }
 
 // Exist implements store.Exist

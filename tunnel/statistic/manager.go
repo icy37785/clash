@@ -55,7 +55,7 @@ func (m *Manager) Now() (up int64, down int64) {
 }
 
 func (m *Manager) Snapshot() *Snapshot {
-	connections := []tracker{}
+	var connections []tracker
 	m.connections.Range(func(key, value any) bool {
 		connections = append(connections, value.(tracker))
 		return true

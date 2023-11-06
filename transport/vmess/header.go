@@ -52,7 +52,7 @@ func (h *hMacCreator) Create() hash.Hash {
 func createAuthID(cmdKey []byte, time int64) [16]byte {
 	buf := protobytes.BytesWriter{}
 	buf.PutUint64be(uint64(time))
-	buf.ReadFull(rand.Reader, 4)
+	_ = buf.ReadFull(rand.Reader, 4)
 	zero := crc32.ChecksumIEEE(buf.Bytes())
 	buf.PutUint32be(zero)
 

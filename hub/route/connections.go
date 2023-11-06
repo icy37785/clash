@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Dreamacro/clash/tunnel/statistic"
+	"github.com/icy37785/clash/tunnel/statistic"
 
 	"github.com/Dreamacro/protobytes"
 	"github.com/go-chi/chi/v5"
@@ -76,7 +76,7 @@ func closeConnection(w http.ResponseWriter, r *http.Request) {
 	snapshot := statistic.DefaultManager.Snapshot()
 	for _, c := range snapshot.Connections {
 		if id == c.ID() {
-			c.Close()
+			_ = c.Close()
 			break
 		}
 	}
@@ -86,7 +86,7 @@ func closeConnection(w http.ResponseWriter, r *http.Request) {
 func closeAllConnections(w http.ResponseWriter, r *http.Request) {
 	snapshot := statistic.DefaultManager.Snapshot()
 	for _, c := range snapshot.Connections {
-		c.Close()
+		_ = c.Close()
 	}
 	render.NoContent(w, r)
 }

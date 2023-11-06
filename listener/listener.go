@@ -7,16 +7,16 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Dreamacro/clash/adapter/inbound"
-	"github.com/Dreamacro/clash/config"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/listener/http"
-	"github.com/Dreamacro/clash/listener/mixed"
-	"github.com/Dreamacro/clash/listener/redir"
-	"github.com/Dreamacro/clash/listener/socks"
-	"github.com/Dreamacro/clash/listener/tproxy"
-	"github.com/Dreamacro/clash/listener/tunnel"
-	"github.com/Dreamacro/clash/log"
+	"github.com/icy37785/clash/adapter/inbound"
+	"github.com/icy37785/clash/config"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/listener/http"
+	"github.com/icy37785/clash/listener/mixed"
+	"github.com/icy37785/clash/listener/redir"
+	"github.com/icy37785/clash/listener/socks"
+	"github.com/icy37785/clash/listener/tproxy"
+	"github.com/icy37785/clash/listener/tunnel"
+	"github.com/icy37785/clash/log"
 
 	"github.com/samber/lo"
 )
@@ -129,40 +129,40 @@ func closeListener(inbound C.Inbound) {
 
 func getNeedCloseAndCreateInbound(originInbounds []C.Inbound, newInbounds []C.Inbound) ([]C.Inbound, []C.Inbound) {
 	needCloseMap := map[C.Inbound]bool{}
-	needClose := []C.Inbound{}
-	needCreate := []C.Inbound{}
+	var needClose []C.Inbound
+	var needCreate []C.Inbound
 
-	for _, inbound := range originInbounds {
-		needCloseMap[inbound] = true
+	for _, _inbound := range originInbounds {
+		needCloseMap[_inbound] = true
 	}
-	for _, inbound := range newInbounds {
-		if needCloseMap[inbound] {
-			delete(needCloseMap, inbound)
+	for _, _inbound := range newInbounds {
+		if needCloseMap[_inbound] {
+			delete(needCloseMap, _inbound)
 		} else {
-			needCreate = append(needCreate, inbound)
+			needCreate = append(needCreate, _inbound)
 		}
 	}
-	for inbound := range needCloseMap {
-		needClose = append(needClose, inbound)
+	for _inbound := range needCloseMap {
+		needClose = append(needClose, _inbound)
 	}
 	return needClose, needCreate
 }
 
-// only recreate inbound config listener
+// ReCreateListeners only recreate inbound config listener
 func ReCreateListeners(inbounds []C.Inbound, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound.PacketAdapter) {
-	newInbounds := []C.Inbound{}
+	var newInbounds []C.Inbound
 	newInbounds = append(newInbounds, inbounds...)
-	for _, inbound := range getInbounds() {
-		if inbound.IsFromPortCfg {
-			newInbounds = append(newInbounds, inbound)
+	for _, _inbound := range getInbounds() {
+		if _inbound.IsFromPortCfg {
+			newInbounds = append(newInbounds, _inbound)
 		}
 	}
 	reCreateListeners(newInbounds, tcpIn, udpIn)
 }
 
-// only recreate ports config listener
+// ReCreatePortsListeners only recreate ports config listener
 func ReCreatePortsListeners(ports Ports, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound.PacketAdapter) {
-	newInbounds := []C.Inbound{}
+	var newInbounds []C.Inbound
 	newInbounds = append(newInbounds, GetInbounds()...)
 	newInbounds = addPortInbound(newInbounds, C.InboundTypeHTTP, ports.Port)
 	newInbounds = addPortInbound(newInbounds, C.InboundTypeSocks, ports.SocksPort)
@@ -187,11 +187,11 @@ func reCreateListeners(inbounds []C.Inbound, tcpIn chan<- C.ConnContext, udpIn c
 	recreateMux.Lock()
 	defer recreateMux.Unlock()
 	needClose, needCreate := getNeedCloseAndCreateInbound(getInbounds(), inbounds)
-	for _, inbound := range needClose {
-		closeListener(inbound)
+	for _, _inbound := range needClose {
+		closeListener(_inbound)
 	}
-	for _, inbound := range needCreate {
-		createListener(inbound, tcpIn, udpIn)
+	for _, _inbound := range needCreate {
+		createListener(_inbound, tcpIn, udpIn)
 	}
 }
 
@@ -254,10 +254,10 @@ func PatchTunnel(tunnels []config.Tunnel, tcpIn chan<- C.ConnContext, udpIn chan
 	for _, elm := range needClose {
 		key := fmt.Sprintf("%s/%s/%s", elm.addr, elm.target, elm.proxy)
 		if elm.network == "tcp" {
-			tunnelTCPListeners[key].Close()
+			_ = tunnelTCPListeners[key].Close()
 			delete(tunnelTCPListeners, key)
 		} else {
-			tunnelUDPListeners[key].Close()
+			_ = tunnelUDPListeners[key].Close()
 			delete(tunnelUDPListeners, key)
 		}
 	}
@@ -293,12 +293,12 @@ func GetInbounds() []C.Inbound {
 // GetInbounds return the inbounds of proxy servers
 func getInbounds() []C.Inbound {
 	var inbounds []C.Inbound
-	for inbound := range tcpListeners {
-		inbounds = append(inbounds, inbound)
+	for _inbound := range tcpListeners {
+		inbounds = append(inbounds, _inbound)
 	}
-	for inbound := range udpListeners {
-		if _, ok := tcpListeners[inbound]; !ok {
-			inbounds = append(inbounds, inbound)
+	for _inbound := range udpListeners {
+		if _, ok := tcpListeners[_inbound]; !ok {
+			inbounds = append(inbounds, _inbound)
 		}
 	}
 	return inbounds
@@ -307,8 +307,8 @@ func getInbounds() []C.Inbound {
 // GetPorts return the ports of proxy servers
 func GetPorts() *Ports {
 	ports := &Ports{}
-	for _, inbound := range getInbounds() {
-		fillPort(inbound, ports)
+	for _, _inbound := range getInbounds() {
+		fillPort(_inbound, ports)
 	}
 	return ports
 }

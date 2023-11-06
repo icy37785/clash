@@ -5,12 +5,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Dreamacro/clash/common/cache"
-	"github.com/Dreamacro/clash/component/fakeip"
-	"github.com/Dreamacro/clash/component/trie"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/context"
-	"github.com/Dreamacro/clash/log"
+	"github.com/icy37785/clash/common/cache"
+	"github.com/icy37785/clash/component/fakeip"
+	"github.com/icy37785/clash/component/trie"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/context"
+	"github.com/icy37785/clash/log"
 
 	D "github.com/miekg/dns"
 )
@@ -182,7 +182,7 @@ func compose(middlewares []middleware, endpoint handler) handler {
 }
 
 func newHandler(resolver *Resolver, mapper *ResolverEnhancer) handler {
-	middlewares := []middleware{}
+	var middlewares []middleware
 
 	if resolver.hosts != nil {
 		middlewares = append(middlewares, withHosts(resolver.hosts))

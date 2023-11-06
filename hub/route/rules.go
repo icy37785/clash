@@ -3,7 +3,7 @@ package route
 import (
 	"net/http"
 
-	"github.com/Dreamacro/clash/tunnel"
+	"github.com/icy37785/clash/tunnel"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -24,7 +24,7 @@ type Rule struct {
 func getRules(w http.ResponseWriter, r *http.Request) {
 	rawRules := tunnel.Rules()
 
-	rules := []Rule{}
+	var rules []Rule
 	for _, rule := range rawRules {
 		rules = append(rules, Rule{
 			Type:    rule.RuleType().String(),

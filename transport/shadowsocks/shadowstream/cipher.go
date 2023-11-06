@@ -100,7 +100,7 @@ func (k rc4Md5Key) IVSize() int {
 
 func (k rc4Md5Key) Encrypter(iv []byte) cipher.Stream {
 	h := md5.New()
-	h.Write([]byte(k))
+	h.Write(k)
 	h.Write(iv)
 	rc4key := h.Sum(nil)
 	c, _ := rc4.NewCipher(rc4key)

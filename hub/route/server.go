@@ -10,9 +10,9 @@ import (
 	"time"
 	"unsafe"
 
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/log"
-	"github.com/Dreamacro/clash/tunnel/statistic"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/log"
+	"github.com/icy37785/clash/tunnel/statistic"
 
 	"github.com/Dreamacro/protobytes"
 	"github.com/go-chi/chi/v5"
@@ -53,14 +53,14 @@ func Start(addr string, secret string) {
 
 	r := chi.NewRouter()
 
-	cors := cors.New(cors.Options{
+	_cors := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE"},
 		AllowedHeaders: []string{"Content-Type", "Authorization"},
 		MaxAge:         300,
 	})
 
-	r.Use(cors.Handler)
+	r.Use(_cors.Handler)
 	r.Group(func(r chi.Router) {
 		r.Use(authentication)
 
@@ -225,24 +225,24 @@ func getLogs(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		for elm := range sub {
-			log := elm.(log.Event)
+			_log := elm.(log.Event)
 			select {
-			case ch <- log:
+			case ch <- _log:
 			default:
 			}
 		}
 		close(ch)
 	}()
 
-	for log := range ch {
-		if log.LogLevel < level {
+	for _log := range ch {
+		if _log.LogLevel < level {
 			continue
 		}
 		buf.Reset()
 
 		if err := json.NewEncoder(buf).Encode(Log{
-			Type:    log.Type(),
-			Payload: log.Payload,
+			Type:    _log.Type(),
+			Payload: _log.Payload,
 		}); err != nil {
 			break
 		}

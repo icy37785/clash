@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Dreamacro/clash/common/structure"
-	C "github.com/Dreamacro/clash/constant"
-	types "github.com/Dreamacro/clash/constant/provider"
+	"github.com/icy37785/clash/common/structure"
+	C "github.com/icy37785/clash/constant"
+	types "github.com/icy37785/clash/constant/provider"
 )
 
 var (

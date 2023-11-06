@@ -2,11 +2,12 @@ package snell
 
 import (
 	"context"
+	"errors"
 	"net"
 	"time"
 
-	"github.com/Dreamacro/clash/component/pool"
-	"github.com/Dreamacro/clash/transport/shadowsocks/shadowaead"
+	"github.com/icy37785/clash/component/pool"
+	"github.com/icy37785/clash/transport/shadowsocks/shadowaead"
 )
 
 type Pool struct {
@@ -28,7 +29,7 @@ func (p *Pool) GetContext(ctx context.Context) (net.Conn, error) {
 
 func (p *Pool) Put(conn net.Conn) {
 	if err := HalfClose(conn); err != nil {
-		conn.Close()
+		_ = conn.Close()
 		return
 	}
 
@@ -45,7 +46,7 @@ func (pc *PoolConn) Read(b []byte) (int, error) {
 	reply := pc.Snell.reply
 
 	n, err := pc.Snell.Read(b)
-	if err == shadowaead.ErrZeroChunk {
+	if errors.Is(err, shadowaead.ErrZeroChunk) {
 		// if reply is false, it should be client halfclose.
 		// ignore error and read data again.
 		if !reply {
@@ -63,7 +64,7 @@ func (pc *PoolConn) Write(b []byte) (int, error) {
 func (pc *PoolConn) Close() error {
 	// clash use SetReadDeadline to break bidirectional copy between client and server.
 	// reset it before reuse connection to avoid io timeout error.
-	pc.Snell.Conn.SetReadDeadline(time.Time{})
+	_ = pc.Snell.Conn.SetReadDeadline(time.Time{})
 	pc.pool.Put(pc.Snell)
 	return nil
 }
@@ -76,7 +77,7 @@ func NewPool(factory func(context.Context) (*Snell, error)) *Pool {
 		pool.WithAge(15000),
 		pool.WithSize(10),
 		pool.WithEvict(func(item any) {
-			item.(*Snell).Close()
+			_ = item.(*Snell).Close()
 		}),
 	)
 

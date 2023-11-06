@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/Dreamacro/clash/transport/shadowsocks/shadowaead"
-	"github.com/Dreamacro/clash/transport/shadowsocks/shadowstream"
+	"github.com/icy37785/clash/transport/shadowsocks/shadowaead"
+	"github.com/icy37785/clash/transport/shadowsocks/shadowstream"
 )
 
 type Cipher interface {
@@ -149,7 +149,7 @@ type dummy struct{}
 func (dummy) StreamConn(c net.Conn) net.Conn             { return c }
 func (dummy) PacketConn(c net.PacketConn) net.PacketConn { return c }
 
-// key-derivation function from original Shadowsocks
+// Kdf key-derivation function from original Shadowsocks
 func Kdf(password string, keyLen int) []byte {
 	var b, prev []byte
 	h := md5.New()

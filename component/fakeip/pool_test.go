@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Dreamacro/clash/component/profile/cachefile"
-	"github.com/Dreamacro/clash/component/trie"
+	"github.com/icy37785/clash/component/profile/cachefile"
+	"github.com/icy37785/clash/component/trie"
 
 	"github.com/stretchr/testify/assert"
 	"go.etcd.io/bbolt"
@@ -118,7 +118,7 @@ func TestPool_CycleUsed(t *testing.T) {
 func TestPool_Skip(t *testing.T) {
 	_, ipnet, _ := net.ParseCIDR("192.168.0.1/30")
 	tree := trie.New()
-	tree.Insert("example.com", tree)
+	_ = tree.Insert("example.com", tree)
 	pools, tempfile, err := createPools(Options{
 		IPNet: ipnet,
 		Size:  10,

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Dreamacro/clash/component/trie"
+	"github.com/icy37785/clash/component/trie"
 
 	"github.com/miekg/dns"
 )
@@ -165,7 +165,7 @@ func LookupIPWithResolver(ctx context.Context, host string, r Resolver) ([]net.I
 	return ips, nil
 }
 
-// ResolveIP with a host, return ip
+// LookupIP ResolveIP with a host, return ip
 func LookupIP(ctx context.Context, host string) ([]net.IP, error) {
 	return LookupIPWithResolver(ctx, host, DefaultResolver)
 }

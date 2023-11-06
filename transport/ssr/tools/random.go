@@ -3,7 +3,7 @@ package tools
 import (
 	"encoding/binary"
 
-	"github.com/Dreamacro/clash/common/pool"
+	"github.com/icy37785/clash/common/pool"
 )
 
 // XorShift128Plus - a pseudorandom number generator
@@ -25,7 +25,9 @@ func (r *XorShift128Plus) InitFromBin(bin []byte) {
 	var full []byte
 	if len(bin) < 16 {
 		full := pool.Get(16)[:0]
-		defer pool.Put(full)
+		defer func(buf []byte) {
+			_ = pool.Put(buf)
+		}(full)
 		full = append(full, bin...)
 		for len(full) < 16 {
 			full = append(full, 0)
@@ -41,7 +43,9 @@ func (r *XorShift128Plus) InitFromBinAndLength(bin []byte, length int) {
 	var full []byte
 	if len(bin) < 16 {
 		full := pool.Get(16)[:0]
-		defer pool.Put(full)
+		defer func(buf []byte) {
+			_ = pool.Put(buf)
+		}(full)
 		full = append(full, bin...)
 		for len(full) < 16 {
 			full = append(full, 0)

@@ -3,12 +3,12 @@ package socks
 import (
 	"net"
 
-	"github.com/Dreamacro/clash/adapter/inbound"
-	"github.com/Dreamacro/clash/common/pool"
-	"github.com/Dreamacro/clash/common/sockopt"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/log"
-	"github.com/Dreamacro/clash/transport/socks5"
+	"github.com/icy37785/clash/adapter/inbound"
+	"github.com/icy37785/clash/common/pool"
+	"github.com/icy37785/clash/common/sockopt"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/log"
+	"github.com/icy37785/clash/transport/socks5"
 )
 
 type UDPListener struct {
@@ -52,7 +52,7 @@ func NewUDP(addr string, in chan<- *inbound.PacketAdapter) (C.Listener, error) {
 			buf := pool.Get(pool.UDPBufferSize)
 			n, remoteAddr, err := l.ReadFrom(buf)
 			if err != nil {
-				pool.Put(buf)
+				_ = pool.Put(buf)
 				if sl.closed {
 					break
 				}
@@ -69,7 +69,7 @@ func handleSocksUDP(pc net.PacketConn, in chan<- *inbound.PacketAdapter, buf []b
 	target, payload, err := socks5.DecodeUDPPacket(buf)
 	if err != nil {
 		// Unresolved UDP packet, return buffer to the pool
-		pool.Put(buf)
+		_ = pool.Put(buf)
 		return
 	}
 	packet := &packet{

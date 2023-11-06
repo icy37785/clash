@@ -4,12 +4,12 @@ import (
 	"io"
 	"net"
 
-	"github.com/Dreamacro/clash/adapter/inbound"
-	N "github.com/Dreamacro/clash/common/net"
-	C "github.com/Dreamacro/clash/constant"
-	authStore "github.com/Dreamacro/clash/listener/auth"
-	"github.com/Dreamacro/clash/transport/socks4"
-	"github.com/Dreamacro/clash/transport/socks5"
+	"github.com/icy37785/clash/adapter/inbound"
+	N "github.com/icy37785/clash/common/net"
+	C "github.com/icy37785/clash/constant"
+	authStore "github.com/icy37785/clash/listener/auth"
+	"github.com/icy37785/clash/transport/socks4"
+	"github.com/icy37785/clash/transport/socks5"
 )
 
 type Listener struct {
@@ -61,11 +61,11 @@ func New(addr string, in chan<- C.ConnContext) (C.Listener, error) {
 }
 
 func handleSocks(conn net.Conn, in chan<- C.ConnContext) {
-	conn.(*net.TCPConn).SetKeepAlive(true)
+	_ = conn.(*net.TCPConn).SetKeepAlive(true)
 	bufConn := N.NewBufferedConn(conn)
 	head, err := bufConn.Peek(1)
 	if err != nil {
-		conn.Close()
+		_ = conn.Close()
 		return
 	}
 
@@ -75,14 +75,14 @@ func handleSocks(conn net.Conn, in chan<- C.ConnContext) {
 	case socks5.Version:
 		HandleSocks5(bufConn, in)
 	default:
-		conn.Close()
+		_ = conn.Close()
 	}
 }
 
 func HandleSocks4(conn net.Conn, in chan<- C.ConnContext) {
 	addr, _, err := socks4.ServerHandshake(conn, authStore.Authenticator())
 	if err != nil {
-		conn.Close()
+		_ = conn.Close()
 		return
 	}
 	in <- inbound.NewSocket(socks5.ParseAddr(addr), conn, C.SOCKS4)
@@ -91,11 +91,13 @@ func HandleSocks4(conn net.Conn, in chan<- C.ConnContext) {
 func HandleSocks5(conn net.Conn, in chan<- C.ConnContext) {
 	target, command, err := socks5.ServerHandshake(conn, authStore.Authenticator())
 	if err != nil {
-		conn.Close()
+		_ = conn.Close()
 		return
 	}
 	if command == socks5.CmdUDPAssociate {
-		defer conn.Close()
+		defer func(conn net.Conn) {
+			_ = conn.Close()
+		}(conn)
 		io.Copy(io.Discard, conn)
 		return
 	}

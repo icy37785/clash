@@ -4,10 +4,10 @@ import (
 	"net"
 	"net/netip"
 
-	"github.com/Dreamacro/clash/adapter/inbound"
-	"github.com/Dreamacro/clash/common/pool"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/transport/socks5"
+	"github.com/icy37785/clash/adapter/inbound"
+	"github.com/icy37785/clash/common/pool"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/transport/socks5"
 )
 
 type UDPListener struct {
@@ -61,7 +61,7 @@ func NewUDP(addr string, in chan<- *inbound.PacketAdapter) (C.Listener, error) {
 			buf := pool.Get(pool.UDPBufferSize)
 			n, oobn, _, lAddr, err := c.ReadMsgUDPAddrPort(buf, oob)
 			if err != nil {
-				pool.Put(buf)
+				_ = pool.Put(buf)
 				if rl.closed {
 					break
 				}

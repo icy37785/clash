@@ -10,12 +10,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Dreamacro/clash/component/dialer"
-	"github.com/Dreamacro/clash/component/resolver"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/transport/gun"
-	"github.com/Dreamacro/clash/transport/socks5"
-	"github.com/Dreamacro/clash/transport/vmess"
+	"github.com/icy37785/clash/component/dialer"
+	"github.com/icy37785/clash/component/resolver"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/transport/gun"
+	"github.com/icy37785/clash/transport/socks5"
+	"github.com/icy37785/clash/transport/vmess"
 
 	"golang.org/x/net/http2"
 )
@@ -222,7 +222,7 @@ func (v *Vmess) DialContext(ctx context.Context, metadata *C.Metadata, opts ...d
 
 // ListenPacketContext implements C.ProxyAdapter
 func (v *Vmess) ListenPacketContext(ctx context.Context, metadata *C.Metadata, opts ...dialer.Option) (_ C.PacketConn, err error) {
-	// vmess use stream-oriented udp with a special address, so we needs a net.UDPAddr
+	// vmess use stream-oriented udp with a special address, so we need a net.UDPAddr
 	if !metadata.Resolved() {
 		ip, err := resolver.ResolveIP(metadata.Host)
 		if err != nil {

@@ -18,7 +18,7 @@ func TestTrie_Basic(t *testing.T) {
 	}
 
 	for _, domain := range domains {
-		tree.Insert(domain, localIP)
+		_ = tree.Insert(domain, localIP)
 	}
 
 	node := tree.Search("example.com")
@@ -47,7 +47,7 @@ func TestTrie_Wildcard(t *testing.T) {
 	}
 
 	for _, domain := range domains {
-		tree.Insert(domain, localIP)
+		_ = tree.Insert(domain, localIP)
 	}
 
 	assert.NotNil(t, tree.Search("sub.example.com"))
@@ -79,7 +79,7 @@ func TestTrie_Priority(t *testing.T) {
 	}
 
 	for idx, domain := range domains {
-		tree.Insert(domain, idx)
+		_ = tree.Insert(domain, idx)
 	}
 
 	assertFn("test.dev", 0)
@@ -91,7 +91,7 @@ func TestTrie_Priority(t *testing.T) {
 
 func TestTrie_Boundary(t *testing.T) {
 	tree := New()
-	tree.Insert("*.dev", localIP)
+	_ = tree.Insert("*.dev", localIP)
 
 	assert.NotNil(t, tree.Insert(".", localIP))
 	assert.NotNil(t, tree.Insert("..dev", localIP))
@@ -100,8 +100,8 @@ func TestTrie_Boundary(t *testing.T) {
 
 func TestTrie_WildcardBoundary(t *testing.T) {
 	tree := New()
-	tree.Insert("+.*", localIP)
-	tree.Insert("stun.*.*.*", localIP)
+	_ = tree.Insert("+.*", localIP)
+	_ = tree.Insert("stun.*.*.*", localIP)
 
 	assert.NotNil(t, tree.Search("example.com"))
 }

@@ -3,7 +3,7 @@ package context
 import (
 	"net"
 
-	C "github.com/Dreamacro/clash/constant"
+	C "github.com/icy37785/clash/constant"
 
 	"github.com/gofrs/uuid/v5"
 )
@@ -37,7 +37,7 @@ func (pc *PacketConnContext) PacketConn() net.PacketConn {
 	return pc.packetConn
 }
 
-// InjectPacketConn injectPacketConn manually
+// InjectPacketConn manually
 func (pc *PacketConnContext) InjectPacketConn(pconn C.PacketConn) {
 	pc.packetConn = pconn
 }

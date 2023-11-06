@@ -3,13 +3,13 @@ package mixed
 import (
 	"net"
 
-	"github.com/Dreamacro/clash/common/cache"
-	N "github.com/Dreamacro/clash/common/net"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/listener/http"
-	"github.com/Dreamacro/clash/listener/socks"
-	"github.com/Dreamacro/clash/transport/socks4"
-	"github.com/Dreamacro/clash/transport/socks5"
+	"github.com/icy37785/clash/common/cache"
+	N "github.com/icy37785/clash/common/net"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/listener/http"
+	"github.com/icy37785/clash/listener/socks"
+	"github.com/icy37785/clash/transport/socks4"
+	"github.com/icy37785/clash/transport/socks5"
 )
 
 type Listener struct {
@@ -63,7 +63,7 @@ func New(addr string, in chan<- C.ConnContext) (C.Listener, error) {
 }
 
 func handleConn(conn net.Conn, in chan<- C.ConnContext, cache *cache.LruCache) {
-	conn.(*net.TCPConn).SetKeepAlive(true)
+	_ = conn.(*net.TCPConn).SetKeepAlive(true)
 
 	bufConn := N.NewBufferedConn(conn)
 	head, err := bufConn.Peek(1)

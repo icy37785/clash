@@ -7,7 +7,7 @@ import (
 	"github.com/gofrs/uuid/v5"
 )
 
-// ID cmdKey length
+// IDBytesLen ID cmdKey length
 const (
 	IDBytesLen = 16
 )

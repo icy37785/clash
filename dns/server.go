@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net"
 
-	"github.com/Dreamacro/clash/common/sockopt"
-	"github.com/Dreamacro/clash/context"
-	"github.com/Dreamacro/clash/log"
+	"github.com/icy37785/clash/common/sockopt"
+	"github.com/icy37785/clash/context"
+	"github.com/icy37785/clash/log"
 
 	D "github.com/miekg/dns"
 )
@@ -31,7 +31,7 @@ func (s *Server) ServeDNS(w D.ResponseWriter, r *D.Msg) {
 		return
 	}
 	msg.Compress = true
-	w.WriteMsg(msg)
+	_ = w.WriteMsg(msg)
 }
 
 func handlerWithContext(handler handler, msg *D.Msg) (*D.Msg, error) {
@@ -55,7 +55,7 @@ func ReCreateServer(addr string, resolver *Resolver, mapper *ResolverEnhancer) {
 	}
 
 	if server.Server != nil {
-		server.Shutdown()
+		_ = server.Shutdown()
 		server = &Server{}
 		address = ""
 	}
@@ -99,7 +99,7 @@ func ReCreateServer(addr string, resolver *Resolver, mapper *ResolverEnhancer) {
 	server.Server = &D.Server{Addr: addr, PacketConn: p, Handler: server}
 
 	go func() {
-		server.ActivateAndServe()
+		_ = server.ActivateAndServe()
 	}()
 
 	log.Infoln("DNS server listening at: %s", p.LocalAddr().String())

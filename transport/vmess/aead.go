@@ -7,7 +7,7 @@ import (
 	"io"
 	"sync"
 
-	"github.com/Dreamacro/clash/common/pool"
+	"github.com/icy37785/clash/common/pool"
 )
 
 type aeadWriter struct {
@@ -29,7 +29,7 @@ func (w *aeadWriter) Write(b []byte) (n int, err error) {
 	buf := pool.Get(pool.RelayBufferSize)
 	defer func() {
 		w.writeLock.Unlock()
-		pool.Put(buf)
+		_ = pool.Put(buf)
 	}()
 	length := len(b)
 	for {
@@ -80,7 +80,7 @@ func (r *aeadReader) Read(b []byte) (int, error) {
 		n := copy(b, r.buf[r.offset:])
 		r.offset += n
 		if r.offset == len(r.buf) {
-			pool.Put(r.buf)
+			_ = pool.Put(r.buf)
 			r.buf = nil
 		}
 		return n, nil
@@ -99,7 +99,7 @@ func (r *aeadReader) Read(b []byte) (int, error) {
 	buf := pool.Get(size)
 	_, err = io.ReadFull(r.Reader, buf[:size])
 	if err != nil {
-		pool.Put(buf)
+		_ = pool.Put(buf)
 		return 0, err
 	}
 
@@ -114,7 +114,7 @@ func (r *aeadReader) Read(b []byte) (int, error) {
 	realLen := size - r.Overhead()
 	n := copy(b, buf[:realLen])
 	if len(b) >= realLen {
-		pool.Put(buf)
+		_ = pool.Put(buf)
 		return n, nil
 	}
 

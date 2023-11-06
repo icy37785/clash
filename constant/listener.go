@@ -37,7 +37,6 @@ type inbound struct {
 	IsFromPortCfg bool        `json:"-" yaml:"-"`
 }
 
-// Inbound
 type Inbound inbound
 
 // UnmarshalYAML implements yaml.Unmarshaler

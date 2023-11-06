@@ -4,8 +4,8 @@ import (
 	"net"
 	"strings"
 
-	"github.com/Dreamacro/clash/component/mmdb"
-	"github.com/Dreamacro/clash/component/trie"
+	"github.com/icy37785/clash/component/mmdb"
+	"github.com/icy37785/clash/component/trie"
 )
 
 type fallbackIPFilter interface {
@@ -33,18 +33,18 @@ type fallbackDomainFilter interface {
 	Match(domain string) bool
 }
 
-type domainFilter struct {
+type DomainFilter struct {
 	tree *trie.DomainTrie
 }
 
-func NewDomainFilter(domains []string) *domainFilter {
-	df := domainFilter{tree: trie.New()}
+func NewDomainFilter(domains []string) *DomainFilter {
+	df := DomainFilter{tree: trie.New()}
 	for _, domain := range domains {
-		df.tree.Insert(domain, "")
+		_ = df.tree.Insert(domain, "")
 	}
 	return &df
 }
 
-func (df *domainFilter) Match(domain string) bool {
+func (df *DomainFilter) Match(domain string) bool {
 	return df.tree.Search(domain) != nil
 }

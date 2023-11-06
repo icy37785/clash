@@ -137,7 +137,7 @@ func (c *LruCache) SetWithExpire(key any, value any, expires time.Time) {
 		c.cache[key] = c.lru.PushBack(e)
 
 		if c.maxSize > 0 {
-			if len := c.lru.Len(); len > c.maxSize {
+			if _len := c.lru.Len(); _len > c.maxSize {
 				c.deleteElement(c.lru.Front())
 			}
 		}

@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Dreamacro/clash/adapter/inbound"
-	N "github.com/Dreamacro/clash/common/net"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/transport/socks5"
+	"github.com/icy37785/clash/adapter/inbound"
+	N "github.com/icy37785/clash/common/net"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/transport/socks5"
 )
 
 func isUpgradeRequest(req *http.Request) bool {
@@ -24,7 +24,9 @@ func isUpgradeRequest(req *http.Request) bool {
 }
 
 func handleUpgrade(conn net.Conn, request *http.Request, in chan<- C.ConnContext) {
-	defer conn.Close()
+	defer func(conn net.Conn) {
+		_ = conn.Close()
+	}(conn)
 
 	removeProxyHeaders(request.Header)
 	removeExtraHTTPHostPort(request)
@@ -44,7 +46,9 @@ func handleUpgrade(conn net.Conn, request *http.Request, in chan<- C.ConnContext
 	in <- inbound.NewHTTP(dstAddr, conn.RemoteAddr(), conn.LocalAddr(), right)
 
 	bufferedLeft := N.NewBufferedConn(left)
-	defer bufferedLeft.Close()
+	defer func(bufferedLeft *N.BufferedConn) {
+		_ = bufferedLeft.Close()
+	}(bufferedLeft)
 
 	err := request.Write(bufferedLeft)
 	if err != nil {

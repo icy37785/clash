@@ -6,9 +6,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Dreamacro/clash/common/cache"
-	"github.com/Dreamacro/clash/component/profile/cachefile"
-	"github.com/Dreamacro/clash/component/trie"
+	"github.com/icy37785/clash/common/cache"
+	"github.com/icy37785/clash/component/profile/cachefile"
+	"github.com/icy37785/clash/component/trie"
 )
 
 type store interface {
@@ -145,7 +145,7 @@ type Options struct {
 
 // New return Pool instance
 func New(options Options) (*Pool, error) {
-	min := ipToUint(options.IPNet.IP) + 2
+	_min := ipToUint(options.IPNet.IP) + 2
 
 	ones, bits := options.IPNet.Mask.Size()
 	total := 1<<uint(bits-ones) - 2
@@ -154,11 +154,11 @@ func New(options Options) (*Pool, error) {
 		return nil, errors.New("ipnet don't have valid ip")
 	}
 
-	max := min + uint32(total) - 1
+	_max := _min + uint32(total) - 1
 	pool := &Pool{
-		min:     min,
-		max:     max,
-		gateway: min - 1,
+		min:     _min,
+		max:     _max,
+		gateway: _min - 1,
 		host:    options.Host,
 		ipnet:   options.IPNet,
 	}

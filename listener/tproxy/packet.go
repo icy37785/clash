@@ -4,7 +4,7 @@ import (
 	"net"
 	"net/netip"
 
-	"github.com/Dreamacro/clash/common/pool"
+	"github.com/icy37785/clash/common/pool"
 )
 
 type packet struct {
@@ -24,7 +24,7 @@ func (c *packet) WriteBack(b []byte, addr net.Addr) (n int, err error) {
 		return
 	}
 	n, err = tc.Write(b)
-	tc.Close()
+	_ = tc.Close()
 	return
 }
 
@@ -34,5 +34,5 @@ func (c *packet) LocalAddr() net.Addr {
 }
 
 func (c *packet) Drop() {
-	pool.Put(c.buf)
+	_ = pool.Put(c.buf)
 }

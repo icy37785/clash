@@ -5,7 +5,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/Dreamacro/clash/common/pool"
+	"github.com/icy37785/clash/common/pool"
 )
 
 const (
@@ -34,7 +34,7 @@ func (cr *chunkReader) Read(b []byte) (int, error) {
 		n := copy(b, cr.buf[cr.offset:])
 		cr.offset += n
 		if cr.offset == len(cr.buf) {
-			pool.Put(cr.buf)
+			_ = pool.Put(cr.buf)
 			cr.buf = nil
 		}
 		return n, nil
@@ -62,7 +62,7 @@ func (cr *chunkReader) Read(b []byte) (int, error) {
 	buf := pool.Get(size)
 	_, err = io.ReadFull(cr.Reader, buf)
 	if err != nil {
-		pool.Put(buf)
+		_ = pool.Put(buf)
 		return 0, err
 	}
 	n := copy(b, buf)
@@ -77,7 +77,9 @@ type chunkWriter struct {
 
 func (cw *chunkWriter) Write(b []byte) (n int, err error) {
 	buf := pool.Get(pool.RelayBufferSize)
-	defer pool.Put(buf)
+	defer func(buf []byte) {
+		_ = pool.Put(buf)
+	}(buf)
 	length := len(b)
 	for {
 		if length == 0 {

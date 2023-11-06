@@ -3,8 +3,8 @@ package socks
 import (
 	"net"
 
-	"github.com/Dreamacro/clash/common/pool"
-	"github.com/Dreamacro/clash/transport/socks5"
+	"github.com/icy37785/clash/common/pool"
+	"github.com/icy37785/clash/transport/socks5"
 )
 
 type packet struct {
@@ -33,5 +33,5 @@ func (c *packet) LocalAddr() net.Addr {
 }
 
 func (c *packet) Drop() {
-	pool.Put(c.bufRef)
+	_ = pool.Put(c.bufRef)
 }

@@ -8,8 +8,8 @@ import (
 	"net"
 	"strings"
 
-	"github.com/Dreamacro/clash/component/dialer"
-	"github.com/Dreamacro/clash/component/resolver"
+	"github.com/icy37785/clash/component/dialer"
+	"github.com/icy37785/clash/component/resolver"
 
 	D "github.com/miekg/dns"
 )
@@ -51,7 +51,7 @@ func (c *client) ExchangeContext(ctx context.Context, m *D.Msg) (*D.Msg, error) 
 		network = "tcp"
 	}
 
-	options := []dialer.Option{}
+	var options []dialer.Option
 	if c.iface != "" {
 		options = append(options, dialer.WithInterface(c.iface))
 	}

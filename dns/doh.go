@@ -10,8 +10,8 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/Dreamacro/clash/component/dialer"
-	"github.com/Dreamacro/clash/component/resolver"
+	"github.com/icy37785/clash/component/dialer"
+	"github.com/icy37785/clash/component/resolver"
 
 	D "github.com/miekg/dns"
 )
@@ -101,7 +101,7 @@ func newDoHClient(url, iface string, r *Resolver) *dohClient {
 				}
 				ip := ips[rand.Intn(len(ips))]
 
-				options := []dialer.Option{}
+				var options []dialer.Option
 				if iface != "" {
 					options = append(options, dialer.WithInterface(iface))
 				}

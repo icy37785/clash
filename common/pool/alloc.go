@@ -40,12 +40,12 @@ func (alloc *Allocator) Get(size int) []byte {
 	case size > 65536:
 		return make([]byte, size)
 	default:
-		bits := msb(size)
-		if size == 1<<bits {
-			return alloc.buffers[bits].Get().([]byte)[:size]
+		_bits := msb(size)
+		if size == 1<<_bits {
+			return alloc.buffers[_bits].Get().([]byte)[:size]
 		}
 
-		return alloc.buffers[bits+1].Get().([]byte)[:size]
+		return alloc.buffers[_bits+1].Get().([]byte)[:size]
 	}
 }
 
@@ -56,14 +56,14 @@ func (alloc *Allocator) Put(buf []byte) error {
 		return nil
 	}
 
-	bits := msb(cap(buf))
-	if cap(buf) != 1<<bits {
+	_bits := msb(cap(buf))
+	if cap(buf) != 1<<_bits {
 		return errors.New("allocator Put() incorrect buffer size")
 	}
 
 	//nolint
 	//lint:ignore SA6002 ignore temporarily
-	alloc.buffers[bits].Put(buf)
+	alloc.buffers[_bits].Put(buf)
 	return nil
 }
 

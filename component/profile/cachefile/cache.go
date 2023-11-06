@@ -1,13 +1,14 @@
 package cachefile
 
 import (
+	"errors"
 	"os"
 	"sync"
 	"time"
 
-	"github.com/Dreamacro/clash/component/profile"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/log"
+	"github.com/icy37785/clash/component/profile"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/log"
 
 	"go.etcd.io/bbolt"
 )
@@ -52,7 +53,7 @@ func (c *CacheFile) SelectedMap() map[string]string {
 	}
 
 	mapping := map[string]string{}
-	c.DB.View(func(t *bbolt.Tx) error {
+	_ = c.DB.View(func(t *bbolt.Tx) error {
 		bucket := t.Bucket(bucketSelected)
 		if bucket == nil {
 			return nil
@@ -138,8 +139,8 @@ func (c *CacheFile) Close() error {
 var Cache = sync.OnceValue(func() *CacheFile {
 	options := bbolt.Options{Timeout: time.Second}
 	db, err := bbolt.Open(C.Path.Cache(), fileMode, &options)
-	switch err {
-	case bbolt.ErrInvalid, bbolt.ErrChecksum, bbolt.ErrVersionMismatch:
+	switch {
+	case errors.Is(err, bbolt.ErrInvalid), errors.Is(err, bbolt.ErrChecksum), errors.Is(err, bbolt.ErrVersionMismatch):
 		if err = os.Remove(C.Path.Cache()); err != nil {
 			log.Warnln("[CacheFile] remove invalid cache file error: %s", err.Error())
 			break

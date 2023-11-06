@@ -9,7 +9,7 @@ import (
 	"net/netip"
 	"strconv"
 
-	"github.com/Dreamacro/clash/component/auth"
+	"github.com/icy37785/clash/component/auth"
 
 	"github.com/Dreamacro/protobytes"
 )
@@ -77,11 +77,11 @@ func (a Addr) UDPAddr() *net.UDPAddr {
 	case AtypIPv4:
 		var ip [net.IPv4len]byte
 		copy(ip[0:], a[1:1+net.IPv4len])
-		return &net.UDPAddr{IP: net.IP(ip[:]), Port: int(binary.BigEndian.Uint16(a[1+net.IPv4len : 1+net.IPv4len+2]))}
+		return &net.UDPAddr{IP: ip[:], Port: int(binary.BigEndian.Uint16(a[1+net.IPv4len : 1+net.IPv4len+2]))}
 	case AtypIPv6:
 		var ip [net.IPv6len]byte
 		copy(ip[0:], a[1:1+net.IPv6len])
-		return &net.UDPAddr{IP: net.IP(ip[:]), Port: int(binary.BigEndian.Uint16(a[1+net.IPv6len : 1+net.IPv6len+2]))}
+		return &net.UDPAddr{IP: ip[:], Port: int(binary.BigEndian.Uint16(a[1+net.IPv6len : 1+net.IPv6len+2]))}
 	}
 	// Other Atyp
 	return nil
@@ -99,7 +99,7 @@ const (
 	ErrAddressNotSupported  = Error(8)
 )
 
-// Auth errors used to return a specific "Auth failed" error
+// ErrAuth Auth errors used to return a specific "Auth failed" error
 var ErrAuth = errors.New("auth failed")
 
 type User struct {
@@ -360,7 +360,7 @@ func ParseAddr(s string) Addr {
 	}
 
 	buf.PutUint16be(uint16(portnum))
-	return Addr(buf.Bytes())
+	return buf.Bytes()
 }
 
 // ParseAddrToSocksAddr parse a socks addr from net.addr

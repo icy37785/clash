@@ -3,8 +3,8 @@ package redir
 import (
 	"net"
 
-	"github.com/Dreamacro/clash/adapter/inbound"
-	C "github.com/Dreamacro/clash/constant"
+	"github.com/icy37785/clash/adapter/inbound"
+	C "github.com/icy37785/clash/constant"
 )
 
 type Listener struct {
@@ -58,9 +58,9 @@ func New(addr string, in chan<- C.ConnContext) (C.Listener, error) {
 func handleRedir(conn net.Conn, in chan<- C.ConnContext) {
 	target, err := parserPacket(conn)
 	if err != nil {
-		conn.Close()
+		_ = conn.Close()
 		return
 	}
-	conn.(*net.TCPConn).SetKeepAlive(true)
+	_ = conn.(*net.TCPConn).SetKeepAlive(true)
 	in <- inbound.NewSocket(target, conn, C.REDIR)
 }

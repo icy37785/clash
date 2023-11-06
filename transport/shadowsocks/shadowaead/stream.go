@@ -7,7 +7,7 @@ import (
 	"io"
 	"net"
 
-	"github.com/Dreamacro/clash/common/pool"
+	"github.com/icy37785/clash/common/pool"
 )
 
 const (
@@ -30,7 +30,9 @@ func NewWriter(w io.Writer, aead cipher.AEAD) *Writer { return &Writer{Writer: w
 // Write encrypts p and writes to the embedded io.Writer.
 func (w *Writer) Write(p []byte) (n int, err error) {
 	buf := pool.Get(bufSize)
-	defer pool.Put(buf)
+	defer func(buf []byte) {
+		_ = pool.Put(buf)
+	}(buf)
 	nonce := w.nonce[:w.NonceSize()]
 	tag := w.Overhead()
 	off := 2 + tag
@@ -66,7 +68,9 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 // any error encountered.
 func (w *Writer) ReadFrom(r io.Reader) (n int64, err error) {
 	buf := pool.Get(bufSize)
-	defer pool.Put(buf)
+	defer func(buf []byte) {
+		_ = pool.Put(buf)
+	}(buf)
 	nonce := w.nonce[:w.NonceSize()]
 	tag := w.Overhead()
 	off := 2 + tag
@@ -154,7 +158,7 @@ func (r *Reader) Read(p []byte) (int, error) {
 	n := copy(p, r.buf[r.off:])
 	r.off += n
 	if r.off == len(r.buf) {
-		pool.Put(r.buf[:cap(r.buf)])
+		_ = pool.Put(r.buf[:cap(r.buf)])
 		r.buf = nil
 	}
 	return n, nil
@@ -176,7 +180,7 @@ func (r *Reader) WriteTo(w io.Writer) (n int64, err error) {
 			n += int64(nw)
 			if ew != nil {
 				if r.off == len(r.buf) {
-					pool.Put(r.buf[:cap(r.buf)])
+					_ = pool.Put(r.buf[:cap(r.buf)])
 					r.buf = nil
 				}
 				err = ew

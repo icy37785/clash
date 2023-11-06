@@ -18,9 +18,9 @@ linters-settings:
     custom-order: true
     sections:
       - standard
-      - prefix(github.com/Dreamacro/clash)
+      - prefix(github.com/icy37785/clash)
       - default
   staticcheck:
-    go: '1.21'
+    go: '1.23'
   exhaustive:
     default-signifies-exhaustive: true

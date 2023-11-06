@@ -3,8 +3,8 @@ package mmdb
 import (
 	"sync"
 
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/log"
+	C "github.com/icy37785/clash/constant"
+	"github.com/icy37785/clash/log"
 
 	"github.com/oschwald/geoip2-golang"
 )
@@ -27,7 +27,7 @@ func LoadFromBytes(buffer []byte) {
 func Verify() bool {
 	instance, err := geoip2.Open(C.Path.MMDB())
 	if err == nil {
-		instance.Close()
+		_ = instance.Close()
 	}
 	return err == nil
 }

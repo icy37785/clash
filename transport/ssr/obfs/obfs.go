@@ -38,5 +38,5 @@ func PickObfs(name string, b *Base) (Obfs, int, error) {
 	if choice, ok := obfsList[name]; ok {
 		return choice.new(b), choice.overhead, nil
 	}
-	return nil, 0, fmt.Errorf("Obfs %s not supported", name)
+	return nil, 0, fmt.Errorf("obfs %s not supported", name)
 }

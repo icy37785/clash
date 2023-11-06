@@ -7,7 +7,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/Dreamacro/clash/common/pool"
+	"github.com/icy37785/clash/common/pool"
 
 	"github.com/Dreamacro/protobytes"
 )
@@ -28,7 +28,7 @@ type TLSObfs struct {
 func (to *TLSObfs) read(b []byte, discardN int) (int, error) {
 	buf := pool.Get(discardN)
 	_, err := io.ReadFull(to.Conn, buf)
-	pool.Put(buf)
+	_ = pool.Put(buf)
 	if err != nil {
 		return 0, err
 	}
@@ -136,9 +136,9 @@ func makeClientHelloMsg(data []byte, server string) []byte {
 
 	// random with timestamp, sid len, sid
 	buf.PutUint32be(uint32(time.Now().Unix()))
-	buf.ReadFull(rand.Reader, 28)
+	_ = buf.ReadFull(rand.Reader, 28)
 	buf.PutUint8(32)
-	buf.ReadFull(rand.Reader, 32)
+	_ = buf.ReadFull(rand.Reader, 32)
 
 	// cipher suites
 	buf.PutSlice([]byte{0x00, 0x38})
