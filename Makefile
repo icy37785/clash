@@ -24,7 +24,7 @@ PLATFORM_LIST = \
 	linux-mips64 \
 	linux-mips64le \
 	linux-riscv64 \
-	linux-loong64 \
+	#linux-loong64 \
 	freebsd-386 \
 	freebsd-amd64 \
 	freebsd-amd64-v3 \

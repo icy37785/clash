@@ -34,11 +34,11 @@ This is a general overview of the features that comes with Clash.
 - Remote Providers: load remote proxy lists dynamically
 - RESTful API: update configuration in-place via a comprehensive API
 
-*Some of the features may only be available in the [Premium core](https://dreamacro.github.io/clash/premium/introduction.html).*
+*Some of the features may only be available in the [Premium core](https://icy37785.github.io/clash/premium/introduction.html).*
 
 ## Documentation
 
-You can find the latest documentation at [https://dreamacro.github.io/clash/](https://dreamacro.github.io/clash/).
+You can find the latest documentation at [https://icy37785.github.io/clash/](https://icy37785.github.io/clash/).
 
 ## Credits
 
@@ -50,4 +50,4 @@ You can find the latest documentation at [https://dreamacro.github.io/clash/](ht
 
 This software is released under the GPL-3.0 license.
 
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FDreamacro%2Fclash.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FDreamacro%2Fclash?ref=badge_large)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ficy37785%2Fclash.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ficy37785%2Fclash?ref=badge_large)

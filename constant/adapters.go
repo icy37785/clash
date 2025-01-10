@@ -22,6 +22,8 @@ const (
 	Vless
 	Vmess
 	Trojan
+	WireGuard
+	Hysteria2
 
 	Relay
 	Selector
